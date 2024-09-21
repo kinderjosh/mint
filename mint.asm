@@ -591,7 +591,7 @@ unknown_id_msg: db "error: unknown identifier: ",0
 unknown_id_msg_len equ $-unknown_id_msg
 stack_underflow_msg: db "error: stack underflow",10,0
 stack_underflow_msg_len equ $-stack_underflow_msg
-stack_overflow_msg: db "error: stack underflow",10,0
+stack_overflow_msg: db "error: stack overflow",10,0
 stack_overflow_msg_len equ $-stack_overflow_msg
 dup_str: db "dup"
 drop_str: db "drop"
@@ -608,6 +608,6 @@ TOK_DIGIT equ 2
 
     section .bss
 filename: resb 64
-filename_len: resd 0
+filename_len: resd 1
 src: resb SRC_CAP
 buf: resb BUF_CAP
