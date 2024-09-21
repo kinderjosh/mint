@@ -39,13 +39,29 @@ cd mint
 
 ## Language Reference
 
-| Opcode | Purpose |
+### Keywords
+
+| Name | Purpose |
 | --- | --- |
 | ```dup``` | Copy the top item on the stack and push it to the stack. |
 | ```drop``` | Pop the top item off the stack and discard it. |
 | ```out``` | Pop the top item off the stack and print it. |
 | ```over``` | Copy the item below the top item on the stack and push it to the stack. |
 | ```swap``` | Swap the top two items on the stack. |
+
+### Arithmetic
+
+Like Forth, Mint uses [Reverse Polish notation](https://en.wikipedia.org/wiki/Reverse_Polish_notation).
+
+```
+10 2 / out
+```
+
+Is the same as:
+
+```py
+print(10 / 2)
+```
 
 ## License
 
