@@ -61,12 +61,12 @@ Arithmetic operators pops the top two items and push the result of the operation
 
 This program:
 
-- 1. Pushes 10
-- 2. Pushes 2
-- 3. Pops 10
-- 4. Pops 2
-- 5. Divides 10 by 2
-- 6. Prints the result
+1. Pushes 10
+2. Pushes 2
+3. Pops 10
+4. Pops 2
+5. Divides 10 by 2
+6. Prints the result
 
 ## License
 
