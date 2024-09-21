@@ -152,6 +152,18 @@ read_file:
     mov rdi, 1
     call exit
 
+clear_buf:
+    push rcx
+    mov rcx, -1
+
+.loop:
+    inc rcx
+    mov byte [buf+rcx], 0
+    cmp rcx, BUF_CAP-1
+    jne .loop
+    pop rcx
+    ret
+
 ; in:
 ; - rdi: string pointer
 ; out:
@@ -278,6 +290,16 @@ mint_start:
     call isdigit
     test rdi, rdi
     jz .parse
+    cmp al, '+'
+    je .add_ops
+    cmp al, '-'
+    je .sub_ops
+    cmp al, '*'
+    je .mul_ops
+    cmp al, '/'
+    je .div_ops
+    cmp al, '%'
+    je .mod_ops
     push rax
     mov rax, 1
     mov rdi, 1
@@ -440,8 +462,92 @@ mint_start:
     mov edi, dword [stack_ptr]
     mov qword [stack+rdi*8], rax
     add dword [stack_ptr], 1
+    jmp .next
+
+.add_ops:
+    cmp dword [stack_ptr], 1
+    jle .stack_underflow
+    cmp dword [stack_ptr], STACK_CAP
+    jge .stack_overflow
+    mov esi, dword [stack_ptr]
+    dec esi
+    mov rdx, qword [stack+rsi*8]
+    dec esi
+    mov rdi, qword [stack+rsi*8]
+    add rdi, rdx
+    mov esi, dword [stack_ptr]
+    mov qword [stack+rsi*8], rdi
+    add dword [stack_ptr], 1
+    jmp .next
+
+.sub_ops:
+    cmp dword [stack_ptr], 1
+    jle .stack_underflow
+    cmp dword [stack_ptr], STACK_CAP
+    jge .stack_overflow
+    mov esi, dword [stack_ptr]
+    dec esi
+    mov rdx, qword [stack+rsi*8]
+    dec esi
+    mov rdi, qword [stack+rsi*8]
+    sub rdi, rdx
+    mov esi, dword [stack_ptr]
+    mov qword [stack+rsi*8], rdi
+    add dword [stack_ptr], 1
+    jmp .next
+
+.mul_ops:
+    cmp dword [stack_ptr], 1
+    jle .stack_underflow
+    cmp dword [stack_ptr], STACK_CAP
+    jge .stack_overflow
+    mov esi, dword [stack_ptr]
+    dec esi
+    mov rdx, qword [stack+rsi*8]
+    dec esi
+    mov rdi, qword [stack+rsi*8]
+    imul rdi, rdx
+    mov esi, dword [stack_ptr]
+    mov qword [stack+rsi*8], rdi
+    add dword [stack_ptr], 1
+    jmp .next
+
+.div_ops:
+    cmp dword [stack_ptr], 1
+    jle .stack_underflow
+    cmp dword [stack_ptr], STACK_CAP
+    jge .stack_overflow
+    mov esi, dword [stack_ptr]
+    dec esi
+    mov rbx, qword [stack+rsi*8]
+    dec esi
+    mov rax, qword [stack+rsi*8]
+    cqo
+    idiv rbx
+    mov esi, dword [stack_ptr]
+    mov qword [stack+rsi*8], rax
+    add dword [stack_ptr], 1
+    jmp .next
+
+.mod_ops:
+    cmp dword [stack_ptr], 1
+    jle .stack_underflow
+    cmp dword [stack_ptr], STACK_CAP
+    jge .stack_overflow
+    mov esi, dword [stack_ptr]
+    dec esi
+    mov rbx, qword [stack+rsi*8]
+    dec esi
+    mov rax, qword [stack+rsi*8]
+    xor rdx, rdx
+    idiv rbx
+    mov esi, dword [stack_ptr]
+    mov qword [stack+rsi*8], rdx
+    add dword [stack_ptr], 1
+    jmp .next
 
 .next:
+    call clear_buf
     inc rcx
     jmp .loop
 
