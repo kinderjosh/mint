@@ -66,7 +66,8 @@ This program:
 3. Pops 10
 4. Pops 2
 5. Divides 10 by 2
-6. Prints the result
+6. Pushes the result
+7. Pops and prints the result
 
 ## License
 
