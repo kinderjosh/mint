@@ -43,10 +43,10 @@ cd mint
 
 | Name | Purpose |
 | --- | --- |
-| ```dup``` | Copy the top item on the stack and push it to the stack. |
 | ```drop``` | Pop the top item off the stack and discard it. |
-| ```out``` | Pop the top item off the stack and print it. |
+| ```dup``` | Copy the top item on the stack and push it to the stack. |
 | ```over``` | Copy the item below the top item on the stack and push it to the stack. |
+| ```out``` | Pop the top item off the stack and print it. |
 | ```swap``` | Swap the top two items on the stack. |
 
 ### Arithmetic
