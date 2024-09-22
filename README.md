@@ -61,7 +61,7 @@ cd mint
 
 Like Forth, Mint uses [Reverse Polish notation](https://en.wikipedia.org/wiki/Reverse_Polish_notation).
 
-Arithmetic operators pops the top two items and push the result of the operation.
+Arithmetic operators pop the top two items and push the result of the operation.
 
 ```mint
 10 2 / out
