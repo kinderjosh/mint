@@ -85,9 +85,9 @@ a b
 
 This program pushes a pointer to ```a``` and a pointer to ```b```.
 
-Use the ```store``` and ```load``` variables to access the values within variables.
+Use the ```store``` and ```load``` keywords to access the values within variables.
 
-An example to initialize and add two variables:
+An example to initialize, divide two variables and print the result:
 
 ```mint
 64 a store
