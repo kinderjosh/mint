@@ -51,10 +51,10 @@ cd mint
 | --- | --- |
 | ```drop``` | Pop the top item off the stack and discard it. |
 | ```dup``` | Copy the top item on the stack and push it to the stack. |
-| ```<variable> load ``` | Extracts the value within ```<variable>``` and pushes it to the stack. |
+| ```<variable> load ``` | Extracts the value within ```<variable>``` and push it to the stack. |
 | ```over``` | Copy the item below the top item on the stack and push it to the stack. |
 | ```out``` | Pop the top item off the stack and print it. |
-| ```<variable> store``` | Pops the top item off the stack and stores it into ```<variable>```. |
+| ```<variable> store``` | Pop the top item off the stack and store it into ```<variable>```. |
 | ```swap``` | Swap the top two items on the stack. |
 
 ### Arithmetic
