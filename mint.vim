@@ -1,6 +1,6 @@
-" Vim syntax file for AT (Abstract Template)
+" Vim syntax file for Mint (Minimal Interpreter)
 " Author: Joshua Kinder <https://github.com/kinderjosh>
-" Last Changed: 20 Sep 24
+" Last Changed: 22 Sep 24
 
 if exists("b:current_syntax")
     finish
@@ -8,14 +8,14 @@ endif
 
 let b:current_syntax = "mint"
 
-syntax keyword atStatement dup drop over out store load swap
-syntax keyword atStorageClass a b c d e f g h i j k
-syntax match atComment ";.*" contains=atTodo
-syntax match atNumber "\<\d\+\(\.\d*\)\=\(e[+-]\=\d\+\)\=\>"
-syntax keyword atTodo TODO FIXME XXX
+syntax keyword mintStatement dup drop over out store load swap
+syntax keyword mintStorageClass a b c d e f g h i j k
+syntax match mintComment ";.*" contains=atTodo
+syntax match mintNumber "\<\d\+\(\.\d*\)\=\(e[+-]\=\d\+\)\=\>"
+syntax keyword mintTodo TODO FIXME XXX
 
-hi def link atStatement Keyword
-hi def link atStorageClass StorageClass
-hi def link atComment Comment
-hi def link atNumber Number
-hi def link atTodo Todo
+hi def link mintStatement Keyword
+hi def link mintStorageClass StorageClass
+hi def link mintComment Comment
+hi def link mintNumber Number
+hi def link mintTodo Todo
