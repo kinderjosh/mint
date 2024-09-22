@@ -152,6 +152,8 @@ read_file:
     mov rdi, 1
     call exit
 
+; in:
+; - rdi: string length
 clear_buf:
     push rcx
     mov rcx, -1
@@ -159,8 +161,10 @@ clear_buf:
 .loop:
     inc rcx
     mov byte [buf+rcx], 0
+    cmp rcx, rdi
+    jle .loop
     cmp rcx, BUF_CAP-1
-    jne .loop
+    jge .loop
     pop rcx
     ret
 
@@ -271,10 +275,53 @@ itoa:
     pop rax
     ret
 
+; in:
+; - al: var name
+; out:
+; - rdi: pointer to var
+get_var_ptr:
+    push rcx
+    mov rcx, -1
+
+.loop:
+    inc rcx
+    cmp rcx, VAR_CAP-1
+    jge .not_found
+    cmp al, byte [var_names+rcx]
+    jne .loop
+    lea rdi, [var_values+rcx*8]
+    pop rcx
+    ret
+
+.not_found:
+    push rax
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, var_not_found_msg
+    mov rdx, var_not_found_msg_len
+    syscall
+    pop rax
+    mov byte [rsp], al
+    mov rax, 1
+    mov rdi, 1
+    lea rsi, [rsp]
+    mov rdx, 1
+    syscall
+    mov qword [rsp], 10
+    mov rax, 1
+    mov rdi, 1
+    lea rsi, [rsp]
+    mov rdx, 1
+    syscall
+    add rsp, 8
+    mov rdi, 1
+    call exit
+
 mint_start:
     xor rcx, rcx
 
 .loop:
+    xor rax, rax
     mov al, byte [src+rcx]
     test al, al
     jz .done
@@ -334,8 +381,11 @@ mint_start:
     jmp .parse
 
 .parse_done:
+    mov dword [buf_len], r8d
     cmp r9, TOK_DIGIT
     je .do_digit
+    cmp r8, 1
+    je .do_var
     push rsi
     push rcx
     mov rsi, buf
@@ -363,6 +413,16 @@ mint_start:
     mov rcx, 4
     repe cmpsb
     je .do_swap
+    mov rsi, buf
+    mov rdi, store_str
+    mov rcx, 4
+    repe cmpsb
+    je .do_store
+    mov rsi, buf
+    mov rdi, load_str
+    mov rcx, 4
+    repe cmpsb
+    je .do_load
     mov rax, 1
     mov rdi, 1
     mov rsi, unknown_id_msg
@@ -449,6 +509,27 @@ mint_start:
     mov qword [stack+rsi*8], rdi
     jmp .id_done
 
+.do_store:
+    cmp dword [stack_ptr], 1
+    jle .stack_underflow
+    mov esi, dword [stack_ptr]
+    dec esi
+    mov rdi, qword [stack+rsi*8]
+    dec esi
+    mov rdx, qword [stack+rsi*8]
+    mov qword [rdi], rdx
+    sub dword [stack_ptr], 2
+    jmp .id_done
+
+.do_load:
+    cmp dword [stack_ptr], 1
+    jl .stack_underflow
+    mov esi, dword [stack_ptr]
+    dec esi
+    mov rdi, qword [stack+rsi*8]
+    mov rdx, qword [rdi]
+    mov qword [stack+rsi*8], rdx
+
 .id_done:
     pop rcx
     pop rsi
@@ -459,6 +540,17 @@ mint_start:
     jge .stack_overflow
     mov rdi, buf
     call atoi
+    mov edi, dword [stack_ptr]
+    mov qword [stack+rdi*8], rax
+    add dword [stack_ptr], 1
+    jmp .next
+
+.do_var:
+    cmp dword [stack_ptr], STACK_CAP
+    jge .stack_overflow
+    mov al, byte [buf]
+    call get_var_ptr
+    mov rax, rdi
     mov edi, dword [stack_ptr]
     mov qword [stack+rdi*8], rax
     add dword [stack_ptr], 1
@@ -547,6 +639,7 @@ mint_start:
     jmp .next
 
 .next:
+    mov rdi, r8
     call clear_buf
     inc rcx
     jmp .loop
@@ -593,14 +686,22 @@ stack_underflow_msg: db "error: stack underflow",10,0
 stack_underflow_msg_len equ $-stack_underflow_msg
 stack_overflow_msg: db "error: stack overflow",10,0
 stack_overflow_msg_len equ $-stack_overflow_msg
+var_not_found_msg: db "error: variable not found: ",0
+var_not_found_msg_len equ $-var_not_found_msg
 dup_str: db "dup"
 drop_str: db "drop"
 out_str: db "out"
 over_str: db "over"
 swap_str: db "swap"
+store_str: db "store"
+load_str: db "load"
 STACK_CAP equ 64
 stack: times STACK_CAP dq 0
 stack_ptr: dd 0
+VAR_CAP equ 11
+var_names: db 'a','b','c','d','e','f','g','h','i','j','k'
+var_values: times VAR_CAP dq 0
+var_cnt: dd 0
 SRC_CAP equ 1024
 BUF_CAP equ 64
 TOK_ID equ 1
@@ -611,3 +712,4 @@ filename: resb 64
 filename_len: resd 1
 src: resb SRC_CAP
 buf: resb BUF_CAP
+buf_len: resd 1
