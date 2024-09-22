@@ -72,7 +72,7 @@ Arithmetic operators pops the top two items and push the result of the operation
 This program basically does:
 
 ```c
-printf("%ld\n", 10 / 2)
+printf("%ld\n", 10 / 2);
 ```
 
 ### Variables
