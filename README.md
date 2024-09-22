@@ -8,8 +8,6 @@ Mint (short for Minimal Interpreter) is a stack-based programming language simil
 - [x] - Keywords
 - [x] - Math
 - [x] - Variables
-- [ ] - Conditions
-- [ ] - Procedures
 
 ## Example
 
